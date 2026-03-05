@@ -26,7 +26,7 @@ def test_create_task():
     response = client.post("/tasks/?title=Faire le projet CI-CD")
     assert response.status_code == 200
     assert response.json()["title"] == "Faire le projet CI-CD"
-    assert response.json()["completed"] == False
+    assert not response.json()["completed"]
 
 def test_read_tasks():
     response = client.get("/tasks/")
@@ -41,7 +41,7 @@ def test_update_task():
     # On la modifie pour dire qu'elle est terminée
     update_resp = client.put(f"/tasks/{task_id}", json={"completed": True})
     assert update_resp.status_code == 200
-    assert update_resp.json()["completed"] == True
+    assert update_resp.json()["completed"]
 
 def test_delete_task():
     # On crée une tâche
