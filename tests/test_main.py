@@ -20,7 +20,7 @@ def override_get_db():
 app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
 
-# --- TESTS ---
+# Tests
 def test_create_task():
     response = client.post("/tasks/", json={"title": "Faire le CRUD", "description": "C'est important"})
     assert response.status_code == 200, response.text
@@ -30,7 +30,7 @@ def test_create_task():
 def test_read_tasks():
     response = client.get("/tasks/")
     assert response.status_code == 200, response.text
-    assert type(response.json()) == list
+    assert type(response.json()) is list
 
 def test_update_task():
     create_resp = client.post("/tasks/", json={"title": "Tâche à modifier"})
