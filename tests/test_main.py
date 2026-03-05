@@ -36,6 +36,7 @@ def test_read_tasks():
 def test_update_task():
     # On crée une tâche
     create_resp = client.post("/tasks/", json={"title": "Tâche à modifier"})
+    assert create_resp.status_code == 200, create_resp.text
     task_id = create_resp.json()["id"]
 
     # On la modifie pour dire qu'elle est terminée
@@ -46,6 +47,7 @@ def test_update_task():
 def test_delete_task():
     # On crée une tâche
     create_resp = client.post("/tasks/", json={"title": "Tâche à supprimer"})
+    assert create_resp.status_code == 200, create_resp.text
     task_id = create_resp.json()["id"]
 
     # On la supprime

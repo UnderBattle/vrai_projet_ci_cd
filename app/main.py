@@ -26,10 +26,18 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     completed: Optional[bool] = None
+    
+class TaskResponse(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    completed: bool
 
+    class Config:
+        from_attributes = True
 
 # Créer une tache
-@app.post("/tasks/")
+@app.post("/tasks/", response_model=TaskResponse)
 def create_task(title: str, db: Session = Depends(get_db)):
     new_task = database.Task(title=title)
     db.add(new_task)
@@ -38,12 +46,12 @@ def create_task(title: str, db: Session = Depends(get_db)):
     return new_task
 
 #Lire toutes les taches
-@app.get("/tasks/")
+@app.get("/tasks/", response_model=list[TaskResponse])
 def read_tasks(db: Session = Depends(get_db)):
     return db.query(database.Task).all()
 
 # Lire une seul tache
-@app.get("/tasks/{task_id}")
+@app.get("/tasks/{task_id}", response_model=TaskResponse)
 def read_task(task_id: int, db: Session = Depends(get_db)):
     task = db.query(database.Task).filter(database.Task.id == task_id).first()
     if task is None:
@@ -51,7 +59,7 @@ def read_task(task_id: int, db: Session = Depends(get_db)):
     return task
 
 # Mise-à-jour d'une tache
-@app.put("/tasks/{task_id}")
+@app.put("/tasks/{task_id}", response_model=TaskResponse)
 def update_task(task_id: int, task_update: TaskUpdate, db: Session = Depends(get_db)):
     db_task = db.query(database.Task).filter(database.Task.id == task_id).first()
     if db_task is None:
