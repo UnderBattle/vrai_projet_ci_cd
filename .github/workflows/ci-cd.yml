@@ -1,0 +1,50 @@
+name: Super Pipeline CI/CD FastAPI
+
+# Déclencheur : à chaque "push" sur la branche principale
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # Vérification de la qualité et Tests
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Installation des dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Linting avec Ruff (Qualité du code)
+        run: |
+          # Ruff est ultra-rapide. Il vérifie la PEP8 et les erreurs.
+          ruff check .
+
+      - name: Tests & Couverture avec Pytest
+        run: |
+          # On lance les tests et on demande un rapport de couverture
+          pytest --cov=app tests/
+
+  # Construction de l'image Docker
+  build-docker:
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Build de l'image Docker
+        run: |
+          docker build -t mon-api-todo:latest .
+          
+      - name: Vérification de l'image
+        run: docker image ls
