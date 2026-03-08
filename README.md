@@ -1,4 +1,4 @@
-# 🚀 Projet CI/CD : API To-Do List (Python & Docker)
+# Projet CI/CD : API To-Do List (Python & Docker)
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)
