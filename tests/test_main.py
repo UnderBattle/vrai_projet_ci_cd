@@ -51,3 +51,8 @@ def test_delete_task():
 
     get_resp = client.get(f"/tasks/{task_id}")
     assert get_resp.status_code == 404
+    
+def test_serve_frontend():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma To-Do List CI/CD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-slate-800 mb-6 text-center">Ma To-Do List</h1>
+        
+        <div class="flex mb-6">
+            <input type="text" id="taskTitle" class="flex-grow border-2 border-slate-200 rounded-l-lg p-3 focus:outline-none focus:border-blue-500" placeholder="Ajouter une nouvelle tâche...">
+            <button onclick="addTask()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-r-lg transition duration-200">
+                Ajouter
+            </button>
+        </div>
+
+        <ul id="taskList" class="space-y-3">
+            </ul>
+    </div>
+
+    <script>
+        const API_URL = '/tasks/'; // L'adresse de notre API FastAPI
+
+        // Fonction pour lire les tâches
+        async function fetchTasks() {
+            const response = await fetch(API_URL);
+            const tasks = await response.json();
+            const list = document.getElementById('taskList');
+            list.innerHTML = ''; // On vide la liste avant de la re-remplir
+            
+            tasks.forEach(task => {
+                const isChecked = task.completed ? 'checked' : '';
+                const textStyle = task.completed ? 'line-through text-slate-400' : 'text-slate-700 font-medium';
+                
+                list.innerHTML += `
+                    <li class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                        <div class="flex items-center cursor-pointer" onclick="toggleTask(${task.id}, ${task.completed})">
+                            <input type="checkbox" ${isChecked} class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-3 cursor-pointer">
+                            <span class="${textStyle}">${task.title}</span>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="text-red-400 hover:text-red-600 transition duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </li>
+                `;
+            });
+        }
+
+        // Fonction pour ajouter une tâche
+        async function addTask() {
+            const titleInput = document.getElementById('taskTitle');
+            if (!titleInput.value) return; // Ne rien faire si c'est vide
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: titleInput.value })
+            });
+            titleInput.value = ''; // On vide le champ
+            fetchTasks(); // On rafraîchit la liste
+        }
+
+        // 3. Fonction pour cocher/décocher une tâche
+        async function toggleTask(id, currentStatus) {
+            await fetch(API_URL + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ completed: !currentStatus }) // On inverse le statut
+            });
+            fetchTasks();
+        }
+
+        // Fonction pour supprimer une tâche
+        async function deleteTask(id) {
+            await fetch(API_URL + id, { method: 'DELETE' });
+            fetchTasks();
+        }
+
+        // Permet d'ajouter une tâche avec la touche entrée
+        document.getElementById('taskTitle').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // On charge les tâches dès l'ouverture de la page
+        fetchTasks();
+    </script>
+</body>
+</html>

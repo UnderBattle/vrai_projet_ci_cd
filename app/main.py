@@ -1,12 +1,15 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from app import database
 
 database.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="Mon API CI/CD - ToDo List")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 def get_db():
     db = database.SessionLocal()
@@ -78,3 +81,8 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(db_task)
     db.commit()
     return {"message": "Tâche supprimée avec succès"}
+
+# Route frontend
+@app.get("/", include_in_schema=False)
+def serve_frontend():
+    return FileResponse("app/static/index.html")
