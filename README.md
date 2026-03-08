@@ -39,7 +39,7 @@ Il s'agit d'une simple API qui permet de créer une To-Do-List :
 Vous n'avez pas besoin d'installer Python pour tester ce projet si Docker est installé sur votre machine, ouvrez simplement votre terminal :
 
 ```bash
-docker run -d -p 8000:8000 TON_PSEUDO_DOCKER/mon-api-todo:latest
+docker run -d -p 8000:8000 underbattle/mon-api-todo:latest
 ```
 
 Ouvrez ensuite votre navigateur et allez sur :
@@ -54,7 +54,7 @@ Si vous souhaitez modifier le code ou contribuer au projet, voici comment instal
 
 ### 1. Cloner le projet
 ```bash
-git clone [https://github.com/TON_PSEUDO_GITHUB/NOM_DU_DEPOT.git](https://github.com/UnderBattle/vrai_projet_ci_cd.git)
+git clone [https://github.com/UnderBattle/vrai_projet_ci_cd.git](https://github.com/UnderBattle/vrai_projet_ci_cd.git)
 cd vrai_projet_ci_cd
 ```
 
