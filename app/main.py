@@ -21,7 +21,7 @@ def get_db():
 # Schémas Pydantic pour les requêtes et réponses
 class TaskCreate(BaseModel):
     title: str
-    description: Optional[str] = None
+    description: Optional[str]
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
